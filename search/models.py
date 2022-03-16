@@ -37,3 +37,18 @@ class GitHubRepository(models.Model):
     class Meta:
         verbose_name = "GitHub Repository"
         verbose_name_plural = "GitHub Repositories"
+
+
+class Profession(models.Model):
+    person = models.ForeignKey(GitHubUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64)
+
+
+class Skill(models.Model):
+    person = models.ForeignKey(GitHubUser, on_delete=models.CASCADE)
+    professions = models.ManyToManyField(Profession)
+    name = models.CharField(max_length=32, unique=True, null=False, blank=False)
+
+
+class Language(Skill):
+    file_extensions = ArrayField(base_field=models.CharField(max_length=16))
