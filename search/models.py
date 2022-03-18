@@ -39,16 +39,33 @@ class GitHubRepository(models.Model):
         verbose_name_plural = "GitHub Repositories"
 
 
-class Profession(models.Model):
-    person = models.ForeignKey(GitHubUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64)
-
-
 class Skill(models.Model):
     person = models.ForeignKey(GitHubUser, on_delete=models.CASCADE)
-    professions = models.ManyToManyField(Profession)
     name = models.CharField(max_length=32, unique=True, null=False, blank=False)
 
 
 class Language(Skill):
     file_extensions = ArrayField(base_field=models.CharField(max_length=16))
+
+
+class Profession(models.Model):
+    users = models.ManyToManyField(GitHubUser)
+    repositories = models.ManyToManyField(GitHubRepository)
+    skills = models.ManyToManyField(Skill)
+    name = models.CharField(max_length=64)
+
+
+class Search(models.Model):
+    class SearchCriteria(models.TextChoices):
+        USERNAME = 'NAME'
+        BIO = 'BIO'
+        COMPANY = 'COMP'
+        EMPLOYABILITY = 'EMPL'
+        LOCATION = 'LOC'
+        LANGUAGE = 'LANG'
+        PROFESSION = 'PROF'
+
+    query = models.CharField(max_length=256, blank=False, null=False)
+    by = models.CharField(choices=SearchCriteria.choices, max_length=4,
+                          default=SearchCriteria.PROFESSION)
+

@@ -1,0 +1,20 @@
+#about-website {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#about-website a {
+    display: inline-block;
+    font-size: 2rem;
+    color: white;
+    margin-top: 4.8rem;
+    padding: 1rem 2.4rem !important;
+    border-radius: 1.6rem;
+}
+
+
+#about-website a:hover {
+    text-decoration: none !important;
+}

@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+    <section id="search">
+        <p id="search-form-received" class="search-text">
+            {% if form_received and message %}
+                {{ message }}
+            {% endif %}
+        </p>
+
+        <div id="search-form-container">
+            {% include "snippets/search/search-form.html" %}
+        </div>
+    </section>
+{% endblock content %}
