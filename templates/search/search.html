@@ -2,12 +2,9 @@
 
 {% block content %}
     <section id="search">
-        <p id="search-form-received" class="search-text">
-            {% if form_received and message %}
-                {{ message }}
-            {% endif %}
+        <p id="search-top-text" class="display-4">
+            Search for undiscovered talents:
         </p>
-
         <div id="search-form-container">
             {% include "snippets/search/search-form.html" %}
         </div>

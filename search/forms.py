@@ -7,9 +7,9 @@ class SearchForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             attrs = {
-                "placeholder": field.capitalize(),
+                "placeholder": 'What are you looking for?',
             }
-            self.fields[field].widget.attrs.update(attrs)
+        self.fields[field].widget.attrs.update(attrs)
 
     class Meta:
         model = Search
