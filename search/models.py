@@ -39,10 +39,10 @@ class GitHubRepository(models.Model):
     owner = models.ForeignKey(GitHubUser, on_delete=models.RESTRICT)
     name = models.CharField(max_length=100, null=False, blank=False)
     created_at = models.DateTimeField()
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     forks_count = models.IntegerField()
     languages = ArrayField(base_field=models.CharField(max_length=32))
-    license = models.CharField(max_length=48)
+    license = models.CharField(max_length=48, null=True, blank=True)
 
     def __str__(self):
         return f'GitHubRepository(owner={str(self.owner)}, name={str(self.name)})'
@@ -54,11 +54,12 @@ class GitHubRepository(models.Model):
 
 class Skill(models.Model):
     person = models.ForeignKey(GitHubUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=32, unique=True, null=False, blank=False)
+    name = models.CharField(max_length=32, unique=False, null=False, blank=False)
 
 
-class Language(Skill):
-    file_extensions = ArrayField(base_field=models.CharField(max_length=16))
+class Language(models.Model):
+    name = models.CharField(max_length=64, unique=True, null=False, blank=False)
+    file_extensions = ArrayField(base_field=models.CharField(max_length=16), null=True, blank=True)
 
 
 class Profession(models.Model):
@@ -71,9 +72,6 @@ class Profession(models.Model):
 class Search(models.Model, Github):
     class SearchCriteria(models.TextChoices):
         USERNAME = 'NAME'
-        BIO = 'BIO'
-        COMPANY = 'COMP'
-        EMPLOYABILITY = 'EMPL'
         LOCATION = 'LOC'
         LANGUAGE = 'LANG'
         PROFESSION = 'PROF'
@@ -90,10 +88,10 @@ class Search(models.Model, Github):
     def known_languages(self):
         if not Language.objects.exists():
             languages = self.get_known_languages()
-            for language in languages:
+            for language, extensions in languages.items():
                 Language.objects.create(
-                    name=language.name,
-                    file_extensions=language.extensions
+                    name=language,
+                    file_extensions=extensions
                 )
         return [language.name for language in Language.objects.all()]
 
@@ -118,7 +116,10 @@ class Search(models.Model, Github):
         file = repo.get_contents('lib/linguist/languages.yml')
         content = file.decoded_content.decode('utf-8')
         languages_dict = yaml.load(content, Loader=yaml.SafeLoader)
-        return languages_dict
+        return {
+            language: attrs.get('extensions')
+            for language, attrs in languages_dict.items()
+        }
 
     @property
     def slug(self):
@@ -136,6 +137,14 @@ class Search(models.Model, Github):
         query = '+'.join(keywords) + '+in:readme+in:description'
         return self.search_repositories(query, sort='stars', order='desc')
 
+    def search_users_by_username(self, username):
+        query = username + ' in:login'
+        return self.search_users(query)
+
+    def search_users_by_location(self, location):
+        query = location + ' in:location'
+        return self.search_users(query)
+
     def search_users_by_language(self, language: Union[Language, str]) -> PaginatedList:
         if isinstance(language, Language):
             language = language.name
@@ -143,3 +152,10 @@ class Search(models.Model, Github):
             raise ValueError('language has to be a string or a search.models.Language instance')
         query = 'language:' + language
         return self.search_users(query)
+
+    def search_users_by_profession(self, profession):
+        pass
+
+    def search(self, query, by):
+        search_fn = getattr(self, f'search_users_by_{by.lower()}')
+        return search_fn(query)

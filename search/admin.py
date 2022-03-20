@@ -28,8 +28,8 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Language)
 class LanguageAdmin(admin.ModelAdmin):
-    list_display = ['person', 'name']
-    search_fields = ['person', 'name', 'professions', 'file_extensions']
+    list_display = ['name']
+    search_fields = ['name', 'file_extensions']
 
 
 @admin.register(Search)

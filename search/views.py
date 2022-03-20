@@ -2,7 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 from django.urls import reverse
-from .models import Search
+from github.GithubException import UnknownObjectException
+
+from .models import GitHubUser, GitHubRepository, Skill, Search
 from .forms import SearchForm
 import math
 
@@ -28,8 +30,8 @@ def results(request, by, query, page):
             'page': page_number,
         }
     search = Search(query=query, by=by)
-    # TODO
-    paginated_list = search.search_users_by_language(query)
+    paginated_list = search.search(query, by)
+    results_page = paginated_list.get_page(page)
     page_count = math.ceil(paginated_list.totalCount / 30)
     if page > page_count:
         url = reverse("search:results", kwargs=reverse_url_kwargs(1))
@@ -39,7 +41,7 @@ def results(request, by, query, page):
         for page_number in range(max(page - 2, 1), min(page + 3, page_count))
     }
     context = {
-        'results': paginated_list.get_page(page),
+        'results': results_page,
         'pagination_dict': pagination
     }
     html_template = loader.get_template('search/results.html')

@@ -82,7 +82,7 @@
 }
 
 .user-contact {
-    margin-left: 3rem;
+    margin-right: 3rem;
 }
 
 .user-login {
@@ -90,7 +90,7 @@
 }
 
 .user-blog {
-    margin-left: 3rem;
+    margin-right: 3rem;
 }
 
 .user-hireable {
@@ -98,11 +98,15 @@
 }
 
 .user-company {
-    margin-left: 3rem;
+    margin-right: 3rem;
 }
 
 .user-location {
-    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.user-name {
+    margin-right: 3rem;
 }
 
 #user-bio {
