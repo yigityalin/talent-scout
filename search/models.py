@@ -25,6 +25,11 @@ class GitHubUser(models.Model):
     def __str__(self):
         return f'GitHubUser(login={str(self.login)})'
 
+    def get_top_languages(self, size=5):
+        repos = self.githubrepository_set.all()
+        for repo in repos:
+            print(repo.languages)
+
     class Meta:
         verbose_name = "GitHub User"
         verbose_name_plural = "GitHub Users"
@@ -122,14 +127,10 @@ class Search(models.Model, Github):
     def get_absolute_url(self):
         kwargs = {
             "query": self.slug,
-            "by": dict(self.SearchCriteria.choices).get(self.by).lower()
+            "by": dict(self.SearchCriteria.choices).get(self.by).lower(),
+            "page": 1,
         }
         return reverse("search:results", kwargs=kwargs)
-
-    # TODO: Implement search in github
-    def search_in_topics(self, topics: Iterable) -> PaginatedList:
-        query = " ".join([f'topic:{topic}' for topic in topics])
-        return self.search_repositories(query)
 
     def search_in_readme_and_description(self, keywords: Iterable) -> PaginatedList:
         query = '+'.join(keywords) + '+in:readme+in:description'

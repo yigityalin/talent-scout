@@ -5,18 +5,24 @@
         {% if results is None or results|length == 0 %}
             <div id="results-empty-text" class="text-center">
                 <p class="display-4">
-                    Sorry, this is not a valid query.
+                    Sorry, I could not find a nice fit to your query.
                 </p>
                 <a href="/search" class="bg-primary bg-gradient btn-link">Try again</a>
             </div>
         {% else %}
+            <div id="results-found-top">
+                <p class="display-4 text-center">
+                    Here you are.
+                </p>
+                <a href="/search" class="bg-secondary bg-gradient btn-link">Back to search</a>
+            </div>
             <div id="search-results">
                 {% for user in results %}
-                    <a class="user-link" href="{{ user.html_url }}">
+                    <div class="user-link">
                         <div class="user-card bg-success bg-gradient text-white">
                             <div class="user-header">
                                 <p class="user-login">
-                                    {{ user.login }}
+                                    <a href="{{ user.html_url }}">{{ user.login }}</a>
                                 </p>
                                 {% if user.hireable %}
                                     <p class="user-hireable">
@@ -24,17 +30,56 @@
                                     </p>
                                 {% endif %}
                             </div>
-                            <div class="user-header">
-                                <p class="user-name">
-                                    {{ user.name }}
-                                </p>
-                                <p class="user-email">
-                                    <small>{{ user.email }}</small>
-                                </p>
+                            <div id="user-info" class="user-header">
+                                {% if user.name %}
+                                    <p class="user-name">
+                                        {{ user.name }}
+                                    </p>
+                                {% endif %}
+                                {% if user.email %}
+                                    <p class="user-contact">
+                                        <a href="mailto:{{ user.email }}"><small>{{ user.email }}</small></a>
+                                    </p>
+                                {% endif %}
+                                {% if user.blog %}
+                                    <p class="user-blog">
+                                        <a href="{{ user.blog }}"><small>{{ user.blog }}</small></a>
+                                    </p>
+                                {% endif %}
+                                {% if user.company %}
+                                    <p class="user-company">
+                                        <small>{{ user.company.strip }}</small>
+                                    </p>
+                                {% endif %}
+                                {% if user.location %}
+                                    <p class="user-location">
+                                        <small>{{ user.location }}</small>
+                                    </p>
+                                {% endif %}
                             </div>
+                            {% if user.bio %}
+                                <div id="user-bio" class="user-header">
+                                    <p class="user-bio">
+                                        {{ user.bio }}
+                                    </p>
+                                </div>
+                            {% endif %}
                         </div>
-                    </a>
+                    </div>
                 {% endfor %}
+            </div>
+            <div id="pagination">
+                <ul>
+                    {% for page_num, url in pagination_dict.items %}
+                        <li {% if url %} class="active-page" {% endif %}>
+                            {% if url %}
+                                <a href="{{ url }}">{{ page_num }}</a>
+                            {% else %}
+                                {{ page_num }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
         {% endif %}
     </section>

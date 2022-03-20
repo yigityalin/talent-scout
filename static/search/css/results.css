@@ -15,8 +15,32 @@
     text-decoration: none !important;
 }
 
+#results-found-top {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 2rem;
+}
+
+#results-found-top p {
+    padding-top: 0.8rem;
+}
+
+#results-found-top a {
+    display: inline-block;
+    font-size: 1.6rem;
+    color: white;
+    padding: 0.8rem 2rem !important;
+    border-radius: 1.6rem;
+}
+
+#results-found-top a:hover {
+    text-decoration: none !important;
+}
+
 #search-results {
-    margin: 4rem;
+    margin: 1rem 4rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,9 +61,17 @@
     border-color: #FFFFFF;
     border-style: solid;
     border-radius: 2rem;
-    margin: 2rem 3rem;
+    margin: 1.6rem 3rem;
     padding: 2rem 3rem;
     font-size: 1.6rem;
+}
+
+.user-card a {
+    color: white;
+}
+
+.user-card a:hover {
+    color: #cfcfcf;
 }
 
 .user-header {
@@ -47,10 +79,9 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    margin-bottom: 1.5rem;
 }
 
-.user-email {
+.user-contact {
     margin-left: 3rem;
 }
 
@@ -58,7 +89,57 @@
     font-size: 3.2rem;
 }
 
+.user-blog {
+    margin-left: 3rem;
+}
+
 .user-hireable {
     margin-left: auto;
 }
 
+.user-company {
+    margin-left: 3rem;
+}
+
+.user-location {
+    margin-left: 3rem;
+}
+
+#user-bio {
+    margin-bottom: 1rem;
+}
+
+#user-info {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+#pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#pagination ul {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#pagination ul li {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 2rem;
+    font-size: 3rem;
+    background: var(--color-primary);
+    padding: 1rem 2rem;
+    border-radius: 1.8rem;
+}
+
+#pagination ul li a {
+    color: white;
+}
+
+#pagination ul li a:hover {
+    color: #91C1FF;
+}
