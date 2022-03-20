@@ -9,7 +9,7 @@ class SearchForm(forms.ModelForm):
             attrs = {
                 "placeholder": 'What are you looking for?',
             }
-        self.fields[field].widget.attrs.update(attrs)
+            self.fields[field].widget.attrs.update(attrs)
 
     class Meta:
         model = Search
