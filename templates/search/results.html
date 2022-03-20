@@ -1,5 +1,41 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-    <p>Results</p>
+    <section id="results">
+        {% if results is None or results|length == 0 %}
+            <div id="results-empty-text" class="text-center">
+                <p class="display-4">
+                    Sorry, this is not a valid query.
+                </p>
+                <a href="/search" class="bg-primary bg-gradient btn-link">Try again</a>
+            </div>
+        {% else %}
+            <div id="search-results">
+                {% for user in results %}
+                    <a class="user-link" href="{{ user.html_url }}">
+                        <div class="user-card bg-success bg-gradient text-white">
+                            <div class="user-header">
+                                <p class="user-login">
+                                    {{ user.login }}
+                                </p>
+                                {% if user.hireable %}
+                                    <p class="user-hireable">
+                                        Open to work!
+                                    </p>
+                                {% endif %}
+                            </div>
+                            <div class="user-header">
+                                <p class="user-name">
+                                    {{ user.name }}
+                                </p>
+                                <p class="user-email">
+                                    <small>{{ user.email }}</small>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
 {% endblock content %}

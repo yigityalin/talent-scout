@@ -20,6 +20,8 @@ def index(request):
 
 def results(request, by, query):
     search = Search(query=query, by=by)
-    context = {}
+    context = {
+        'results': [search.get_user('yigityalin')] * 2
+    }
     html_template = loader.get_template('search/results.html')
     return HttpResponse(html_template.render(context, request))

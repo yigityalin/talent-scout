@@ -112,7 +112,6 @@ class Search(models.Model, Github):
         repo = user.get_repo('linguist')
         file = repo.get_contents('lib/linguist/languages.yml')
         content = file.decoded_content.decode('utf-8')
-        content = "\n".join([x for x in content.split('\n') if not x.startswith('#')])
         languages_dict = yaml.load(content, Loader=yaml.SafeLoader)
         return languages_dict
 
@@ -120,15 +119,12 @@ class Search(models.Model, Github):
     def slug(self):
         return text.slugify(self.query)
 
-    def get_results(self):
-        return
-
     def get_absolute_url(self):
-        view_kwargs = {
+        kwargs = {
             "query": self.slug,
             "by": dict(self.SearchCriteria.choices).get(self.by).lower()
         }
-        return reverse("search:results", kwargs=view_kwargs)
+        return reverse("search:results", kwargs=kwargs)
 
     # TODO: Implement search in github
     def search_in_topics(self, topics: Iterable) -> PaginatedList:

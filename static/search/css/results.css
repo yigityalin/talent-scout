@@ -1,0 +1,64 @@
+#results-empty-text {
+    margin-top: 5rem !important;
+}
+
+#results-empty-text a {
+    display: inline-block;
+    font-size: 2rem;
+    color: white;
+    margin-top: 4.8rem;
+    padding: 1rem 2.4rem !important;
+    border-radius: 1.6rem;
+}
+
+#results-empty-text a:hover {
+    text-decoration: none !important;
+}
+
+#search-results {
+    margin: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.user-link {
+    width: 100%;
+}
+
+.user-card {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    color: #FFFFFF;
+    background-color: var(--color-primary);
+    border-color: #FFFFFF;
+    border-style: solid;
+    border-radius: 2rem;
+    margin: 2rem 3rem;
+    padding: 2rem 3rem;
+    font-size: 1.6rem;
+}
+
+.user-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.user-email {
+    margin-left: 3rem;
+}
+
+.user-login {
+    font-size: 3.2rem;
+}
+
+.user-hireable {
+    margin-left: auto;
+}
+
