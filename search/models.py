@@ -47,6 +47,7 @@ class GitHubUser(models.Model):
         return f'GitHubUser(login={str(self.login)})'
 
     def get_top_languages(self, size=5):
+        # TODO
         repos = self.githubrepository_set.all()
         for repo in repos:
             print(repo.languages)

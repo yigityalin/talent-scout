@@ -52,6 +52,17 @@
         </div>
     </section>
 
+    <section id="github-user-languages">
+        <p id="github-user-top-languages-text" class="display-4 text-center">
+            User's Languages
+        </p>
+        <ul>
+            {% for language in github_user_languages %}
+                <li class="text-center github-user-language">{{ language }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
     <section id="github-repos">
         {% if github_repos_list is None or github_repos_list|length == 0 %}
             <p id="no-repos-text" class="display-4 text-center">

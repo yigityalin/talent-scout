@@ -1,3 +1,4 @@
+from collections import Counter
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
@@ -53,9 +54,15 @@ def user_details(request, login):
     github_user = Search().get_user(login)
     paginated_repos = github_user.get_repos()
     page_count = math.ceil(paginated_repos.totalCount / 30)
-    github_repos_list = [repo for page in range(page_count) for repo in paginated_repos.get_page(page)]
+    github_repos_list = []
+    languages = Counter()
+    for page in range(page_count):
+        for repo in paginated_repos.get_page(page):
+            languages.update(repo.get_languages())
+            github_repos_list.append(repo)
     context = {
         'github_user': github_user,
+        'github_user_languages': languages,
         'github_repos_list': github_repos_list,
     }
     html_template = loader.get_template('search/user.html')
