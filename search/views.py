@@ -33,7 +33,7 @@ def results(request, by, query, page):
     if page > page_count:
         url = reverse("search:results", kwargs=reverse_url_kwargs(1))
         return redirect(url)
-    results_page = paginated_list.get_page(page)
+    results_page = paginated_list.get_page(page - 1)
     if return_type == GitHubRepository:
         results_page = list(set(repo.owner for repo in results_page))
     pagination = {
@@ -50,5 +50,5 @@ def results(request, by, query, page):
 
 def user_details(request, login):
     context = {}
-    html_template = loader.get_template('search/results.html')
+    html_template = loader.get_template('search/user.html')
     return HttpResponse(html_template.render(context, request))
