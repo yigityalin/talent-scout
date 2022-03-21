@@ -5,7 +5,9 @@ from django.db import models
 from django.urls import reverse
 from django.utils import text
 from github import Github
-from typing import Union
+from github.NamedUser import NamedUser
+from github.PaginatedList import PaginatedList
+from typing import Union, Type
 import yaml
 
 
@@ -39,7 +41,7 @@ class GitHubUser(models.Model):
     location = models.CharField(max_length=64, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     public_repos = models.IntegerField()
-    profession = models.ManyToManyField(Language)
+    profession = models.ManyToManyField(Profession, blank=True)
 
     def __str__(self):
         return f'GitHubUser(login={str(self.login)})'
@@ -48,6 +50,25 @@ class GitHubUser(models.Model):
         repos = self.githubrepository_set.all()
         for repo in repos:
             print(repo.languages)
+
+    @staticmethod
+    def save_named_user(named_user: NamedUser, profession: Union[str, None], commit: bool = True):
+        user = GitHubUser(
+            login=named_user.login,
+            bio=named_user.bio,
+            blog=named_user.blog,
+            company=named_user.company,
+            email=named_user.email,
+            hireable=named_user.hireable,
+            html_url=named_user.html_url,
+            location=named_user.location,
+            name=named_user.name,
+            public_repos=named_user.public_repos,
+            profession=profession
+        )
+        if commit:
+            user.save()
+        return user
 
     class Meta:
         verbose_name = "GitHub User"
