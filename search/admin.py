@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import GitHubUser, GitHubRepository, Profession, Skill, Language, Search
+from .models import GitHubUser, GitHubRepository, Profession, Language, Search
 
 
 @admin.register(GitHubUser)
@@ -18,12 +18,6 @@ class GitHubRepositoryAdmin(admin.ModelAdmin):
 class ProfessionAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
-
-
-@admin.register(Skill)
-class SkillAdmin(admin.ModelAdmin):
-    list_display = ['person', 'name']
-    search_fields = ['person', 'name', 'professions']
 
 
 @admin.register(Language)

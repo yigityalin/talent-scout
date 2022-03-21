@@ -5,9 +5,27 @@ from django.db import models
 from django.urls import reverse
 from django.utils import text
 from github import Github
-from github.PaginatedList import PaginatedList
 from typing import Union
 import yaml
+
+
+class Language(models.Model):
+    name = models.CharField(max_length=64, unique=True, null=False, blank=False)
+    file_extensions = ArrayField(base_field=models.CharField(max_length=16), null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Profession(models.Model):
+    DELIMITER = ","
+
+    name = models.CharField(max_length=64)
+    skills = models.TextField()
+
+    @property
+    def skills_list(self):
+        return [skill.strip().lower() for skill in self.skills.split(self.DELIMITER)]
 
 
 class GitHubUser(models.Model):
@@ -21,6 +39,7 @@ class GitHubUser(models.Model):
     location = models.CharField(max_length=64, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     public_repos = models.IntegerField()
+    profession = models.ManyToManyField(Language)
 
     def __str__(self):
         return f'GitHubUser(login={str(self.login)})'
@@ -52,23 +71,6 @@ class GitHubRepository(models.Model):
         verbose_name_plural = "GitHub Repositories"
 
 
-class Skill(models.Model):
-    person = models.ForeignKey(GitHubUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=32, unique=False, null=False, blank=False)
-
-
-class Language(models.Model):
-    name = models.CharField(max_length=64, unique=True, null=False, blank=False)
-    file_extensions = ArrayField(base_field=models.CharField(max_length=16), null=True, blank=True)
-
-
-class Profession(models.Model):
-    users = models.ManyToManyField(GitHubUser)
-    repositories = models.ManyToManyField(GitHubRepository)
-    skills = models.ManyToManyField(Skill)
-    name = models.CharField(max_length=64)
-
-
 class Search(models.Model, Github):
     class SearchCriteria(models.TextChoices):
         USERNAME = 'NAME'
@@ -89,7 +91,7 @@ class Search(models.Model, Github):
         if not Language.objects.exists():
             languages = self.get_known_languages()
             for language, extensions in languages.items():
-                Language.objects.create(
+                Language.objects.update_or_create(
                     name=language,
                     file_extensions=extensions
                 )
@@ -109,6 +111,14 @@ class Search(models.Model, Github):
         if languages.exists():
             for language in languages:
                 language.delete()
+
+    def update_known_languages(self):
+        languages = self.get_known_languages()
+        for language, extensions in languages.items():
+            Language.objects.update_or_create(
+                name=language,
+                defaults=dict(file_extensions=extensions)
+            )
 
     def get_known_languages(self):
         user = self.get_user('github')
@@ -133,28 +143,32 @@ class Search(models.Model, Github):
         }
         return reverse("search:results", kwargs=kwargs)
 
-    def search_in_readme_and_description(self, keywords: Iterable) -> PaginatedList:
+    def search_in_readme_and_description(self, keywords: Iterable):
         query = '+'.join(keywords) + '+in:readme+in:description'
         return self.search_repositories(query, sort='stars', order='desc')
 
     def search_users_by_username(self, username):
         query = username + ' in:login'
-        return self.search_users(query)
+        return self.search_users(query), GitHubUser
 
     def search_users_by_location(self, location):
         query = location + ' in:location'
-        return self.search_users(query)
+        return self.search_users(query), GitHubUser
 
-    def search_users_by_language(self, language: Union[Language, str]) -> PaginatedList:
+    def search_users_by_language(self, language: Union[Language, str]):
         if isinstance(language, Language):
             language = language.name
         elif not isinstance(language, str):
             raise ValueError('language has to be a string or a search.models.Language instance')
         query = 'language:' + language
-        return self.search_users(query)
+        return self.search_users(query), GitHubUser
 
     def search_users_by_profession(self, profession):
-        pass
+        query = list(profession)
+        profession = Profession.objects.filter(name__icontains=profession)
+        if profession.exists():
+            query = profession.first().skills.all()
+        return self.search_in_readme_and_description(query), GitHubRepository
 
     def search(self, query, by):
         search_fn = getattr(self, f'search_users_by_{by.lower()}')
