@@ -1,9 +1,76 @@
+#github-user-info {
+    margin: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.github-user-info-card {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    border-color: #FFFFFF;
+    border-style: solid;
+    border-radius: 2rem;
+    margin: 1.6rem 3rem;
+    padding: 2rem 3rem;
+    font-size: 2.4rem;
+}
+
+.github-user-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.github-user-contact {
+    margin-right: 3rem;
+}
+
+.github-user-login {
+    font-size: 4rem;
+    margin-right: 3rem;
+}
+
+.github-user-blog {
+    margin-right: 3rem;
+}
+
+.github-user-hireable {
+    margin-left: auto;
+}
+
+.github-user-company {
+    margin-right: 3rem;
+}
+
+.github-user-location {
+    margin-right: 3rem;
+}
+
+.github-user-name {
+    margin-right: 3rem;
+}
+
+.github-user-bio {
+    margin-bottom: 1rem;
+}
+
+.github-user-info {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
 #no-repos-text {
+    font-size: 3.2rem !important;
     margin: 3rem 0;
 }
 
 #repos-text {
-    margin-top: 3rem;
+    font-size: 3.2rem !important;
 }
 
 .github-repo-card {

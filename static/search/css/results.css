@@ -110,11 +110,11 @@
     margin-right: 3rem;
 }
 
-#user-bio {
+.user-bio {
     margin-bottom: 1rem;
 }
 
-#user-info {
+.user-info {
     margin-bottom: 1rem;
     font-size: 1.8rem;
 }
