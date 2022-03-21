@@ -7,6 +7,7 @@ from django.utils import text
 from github import Github
 from github.NamedUser import NamedUser
 from typing import Union
+from .utils.pagination import CombinedPaginatedList
 import yaml
 
 
@@ -49,6 +50,9 @@ class GitHubUser(models.Model):
         repos = self.githubrepository_set.all()
         for repo in repos:
             print(repo.languages)
+
+    def get_absolute_url(self):
+        return reverse('search:user', kwargs=dict(login=self.login))
 
     @staticmethod
     def save_named_user(named_user: NamedUser, profession: Union[str, None], commit: bool = True):
@@ -167,6 +171,10 @@ class Search(models.Model, Github):
         query = '+'.join(keywords) + '+in:readme+in:description'
         return self.search_repositories(query, sort='stars', order='desc')
 
+    def search_in_topics(self, topics: Iterable):
+        query = " ".join([f'topic:{topic}' for topic in topics])
+        return self.search_repositories(query)
+
     def search_users_by_username(self, username):
         query = username + ' in:login'
         return self.search_users(query), GitHubUser
@@ -187,8 +195,12 @@ class Search(models.Model, Github):
         query = list(profession)
         profession = Profession.objects.filter(name__icontains=profession)
         if profession.exists():
-            query = profession.first().skills
-        return self.search_in_readme_and_description(query), GitHubRepository
+            query = profession.first().skills_list
+        paginated_lists = [
+            self.search_in_readme_and_description(query),
+            self.search_in_topics(query)
+        ]
+        return CombinedPaginatedList(paginated_lists), GitHubRepository
 
     def search(self, query, by):
         search_fn = getattr(self, f'search_users_by_{by.lower()}')

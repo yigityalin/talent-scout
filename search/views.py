@@ -46,3 +46,9 @@ def results(request, by, query, page):
     }
     html_template = loader.get_template('search/results.html')
     return HttpResponse(html_template.render(context, request))
+
+
+def user_details(request, login):
+    context = {}
+    html_template = loader.get_template('search/results.html')
+    return HttpResponse(html_template.render(context, request))
