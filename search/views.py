@@ -35,7 +35,7 @@ def results(request, by, query, page):
         return redirect(url)
     results_page = paginated_list.get_page(page)
     if return_type == GitHubRepository:
-        results_page = [repo.owner for repo in results_page]
+        results_page = list(set(repo.owner for repo in results_page))
     pagination = {
         page_number: reverse("search:results", kwargs=reverse_url_kwargs(page_number)) if (page_number != page) else None
         for page_number in range(max(page - 2, 1), min(page + 3, page_count))
