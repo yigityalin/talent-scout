@@ -60,9 +60,13 @@ def user_details(request, login):
         for repo in paginated_repos.get_page(page):
             languages.update(repo.get_languages())
             github_repos_list.append(repo)
+    languages = sorted(languages.keys(), key=languages.get, reverse=True)
+    user = GitHubUser.save_named_user(github_user, languages)
+    for repo in github_repos_list:
+        GitHubRepository.save_repository(repo, user)
     context = {
         'github_user': github_user,
-        'github_user_languages': sorted(languages.keys(), key=languages.get, reverse=True),
+        'github_user_languages': languages,
         'github_repos_list': github_repos_list,
     }
     html_template = loader.get_template('search/user.html')

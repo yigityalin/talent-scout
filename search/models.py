@@ -6,8 +6,12 @@ from django.db import models
 from django.urls import reverse
 from django.utils import text
 from github import Github
+from github.GithubException import UnknownObjectException
 from github.NamedUser import NamedUser
 from typing import Union
+
+from github.Repository import Repository
+
 from .utils.pagination import CombinedPaginatedList
 import yaml
 
@@ -65,22 +69,22 @@ class GitHubUser(models.Model):
         return ", ".join(languages)
 
     @staticmethod
-    def save_named_user(named_user: NamedUser, languages: str, commit: bool = True):
-        user = GitHubUser(
+    def save_named_user(named_user: NamedUser, languages: list):
+        user, _ = GitHubUser.objects.update_or_create(
             login=named_user.login,
-            bio=named_user.bio,
-            blog=named_user.blog,
-            company=named_user.company,
-            email=named_user.email,
-            hireable=named_user.hireable,
-            html_url=named_user.html_url,
-            location=named_user.location,
-            name=named_user.name,
-            public_repos=named_user.public_repos,
-            languages=GitHubUser.create_languages_str_from_list(languages),
+            defaults=dict(
+                bio=named_user.bio,
+                blog=named_user.blog,
+                company=named_user.company,
+                email=named_user.email,
+                hireable=named_user.hireable,
+                html_url=named_user.html_url,
+                location=named_user.location,
+                name=named_user.name,
+                public_repos=named_user.public_repos,
+                languages=GitHubUser.create_languages_str_from_list(languages)
+            )
         )
-        if commit:
-            user.save()
         return user
 
     class Meta:
@@ -99,6 +103,26 @@ class GitHubRepository(models.Model):
 
     def __str__(self):
         return f'GitHubRepository(owner={str(self.owner)}, name={str(self.name)})'
+
+    @staticmethod
+    def save_repository(repository: Repository, owner: GitHubUser):
+        languages = repository.get_languages()
+        languages = sorted(languages.keys(), key=languages.get, reverse=True)
+        try:
+            license_ = repository.get_license().license.name
+        except UnknownObjectException:
+            license_ = None
+        repository, _ = GitHubRepository.objects.update_or_create(
+            owner=owner, name=repository.name,
+            defaults=dict(
+                created_at=repository.created_at,
+                description=repository.description,
+                forks_count=repository.forks_count,
+                languages=languages,
+                license=license_
+            )
+        )
+        return repository
 
     class Meta:
         verbose_name = "GitHub Repository"
