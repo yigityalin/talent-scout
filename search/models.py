@@ -6,8 +6,7 @@ from django.urls import reverse
 from django.utils import text
 from github import Github
 from github.NamedUser import NamedUser
-from github.PaginatedList import PaginatedList
-from typing import Union, Type
+from typing import Union
 import yaml
 
 
@@ -188,7 +187,7 @@ class Search(models.Model, Github):
         query = list(profession)
         profession = Profession.objects.filter(name__icontains=profession)
         if profession.exists():
-            query = profession.first().skills.all()
+            query = profession.first().skills
         return self.search_in_readme_and_description(query), GitHubRepository
 
     def search(self, query, by):
