@@ -1,3 +1,4 @@
+from collections import Counter
 from collections.abc import Iterable
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
@@ -25,12 +26,17 @@ class Profession(models.Model):
     name = models.CharField(max_length=64)
     skills = models.TextField()
 
+    def __str__(self):
+        return self.name
+
     @property
     def skills_list(self):
         return [skill.strip().lower() for skill in self.skills.split(self.DELIMITER)]
 
 
 class GitHubUser(models.Model):
+    DELIMITER = ","
+
     login = models.CharField(max_length=39, unique=True, null=False, blank=False)
     bio = models.CharField(max_length=160, null=True, blank=True)
     blog = models.CharField(max_length=255, null=True, blank=True)
@@ -41,22 +47,25 @@ class GitHubUser(models.Model):
     location = models.CharField(max_length=64, null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     public_repos = models.IntegerField()
-    profession = models.ManyToManyField(Profession, blank=True)
+    languages = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f'GitHubUser(login={str(self.login)})'
 
-    def get_top_languages(self, size=5):
-        # TODO
-        repos = self.githubrepository_set.all()
-        for repo in repos:
-            print(repo.languages)
+    @property
+    def languages_list(self):
+        return [language.strip().capitalize()
+                for language in self.languages.split(self.DELIMITER)]
 
     def get_absolute_url(self):
         return reverse('search:user', kwargs=dict(login=self.login))
 
     @staticmethod
-    def save_named_user(named_user: NamedUser, profession: Union[str, None], commit: bool = True):
+    def create_languages_str_from_list(languages):
+        return ", ".join(languages)
+
+    @staticmethod
+    def save_named_user(named_user: NamedUser, languages: str, commit: bool = True):
         user = GitHubUser(
             login=named_user.login,
             bio=named_user.bio,
@@ -68,7 +77,7 @@ class GitHubUser(models.Model):
             location=named_user.location,
             name=named_user.name,
             public_repos=named_user.public_repos,
-            profession=profession
+            languages=GitHubUser.create_languages_str_from_list(languages),
         )
         if commit:
             user.save()

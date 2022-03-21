@@ -1,5 +1,15 @@
 from django import forms
-from .models import Search, Profession
+from .models import Search, Profession, GitHubUser
+
+
+class GitHubUserForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['languages'].delimiter = GitHubUser.DELIMITER
+
+    class Meta:
+        model = GitHubUser
+        fields = '__all__'
 
 
 class ProfessionForm(forms.ModelForm):

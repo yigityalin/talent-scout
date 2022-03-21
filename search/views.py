@@ -62,7 +62,7 @@ def user_details(request, login):
             github_repos_list.append(repo)
     context = {
         'github_user': github_user,
-        'github_user_languages': languages,
+        'github_user_languages': sorted(languages.keys(), key=languages.get, reverse=True),
         'github_repos_list': github_repos_list,
     }
     html_template = loader.get_template('search/user.html')
