@@ -36,12 +36,13 @@ def results(request, by, query, page):
     results_page = paginated_list.get_page(page - 1)
     if return_type == GitHubRepository:
         results_page = list(set(repo.owner for repo in results_page))
+    user_page_urls = [reverse('search:user', kwargs=dict(login=user.login)) for user in results_page]
     pagination = {
         page_number: reverse("search:results", kwargs=reverse_url_kwargs(page_number)) if (page_number != page) else None
         for page_number in range(max(page - 2, 1), min(page + 3, page_count))
     }
     context = {
-        'results': results_page,
+        'results': zip(results_page, user_page_urls),
         'pagination_dict': pagination
     }
     html_template = loader.get_template('search/results.html')
@@ -49,6 +50,11 @@ def results(request, by, query, page):
 
 
 def user_details(request, login):
-    context = {}
+    github_user = Search().get_user(login)
+    github_repos_list = github_user.get_repos()
+    context = {
+        'github_user': github_user,
+        'github_repos_list': github_repos_list,
+    }
     html_template = loader.get_template('search/user.html')
     return HttpResponse(html_template.render(context, request))
