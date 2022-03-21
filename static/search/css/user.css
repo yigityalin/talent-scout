@@ -1,0 +1,70 @@
+#no-repos-text {
+    margin: 3rem 0;
+}
+
+#repos-text {
+    margin-top: 3rem;
+}
+
+.github-repo-card {
+    margin: 3rem;
+    padding-left: 3rem;
+    border-style: solid;
+    border-color: #FFFFFF;
+    border-radius: 2rem;
+    background-color: var(--color-primary);
+}
+
+.github-repo-card a {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.github-repo-card svg {
+    color: white;
+    width: 100px;
+    height: 100px;
+}
+
+.github-icon-container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.github-repo-details {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    color: var(--color-primary);
+    text-decoration: none;
+    padding: 2rem;
+    text-overflow: clip;
+    margin-left: 1rem;
+}
+
+.github-repo-name {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.github-repo-description {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.github-repo-language {
+    font-size: 1.4rem;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.github-repos-text {
+    color: #FFFFFF;
+}

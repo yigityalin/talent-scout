@@ -51,7 +51,9 @@ def results(request, by, query, page):
 
 def user_details(request, login):
     github_user = Search().get_user(login)
-    github_repos_list = github_user.get_repos()
+    paginated_repos = github_user.get_repos()
+    page_count = math.ceil(paginated_repos.totalCount / 30)
+    github_repos_list = [repo for page in range(page_count) for repo in paginated_repos.get_page(page)]
     context = {
         'github_user': github_user,
         'github_repos_list': github_repos_list,
